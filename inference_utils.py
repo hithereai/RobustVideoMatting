@@ -53,10 +53,15 @@ class VideoWriter:
 
 
 class ImageSequenceReader(Dataset):
-    def __init__(self, path, transform=None):
+    def __init__(self, path, transform=None, rate=30):
         self.path = path
         self.files = sorted(os.listdir(path))
+        self.rate = rate
         self.transform = transform
+        
+    @property
+    def frame_rate(self):
+        return self.rate
         
     def __len__(self):
         return len(self.files)
