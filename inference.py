@@ -19,7 +19,7 @@ from torchvision import transforms
 from typing import Optional, Tuple
 from tqdm.auto import tqdm
 
-from inference_utils import VideoReader, VideoWriter, ImageSequenceReader, ImageSequenceWriter
+from .inference_utils import VideoReader, VideoWriter, ImageSequenceReader, ImageSequenceWriter
 
 def convert_video(model,
                   input_source: str,
@@ -30,6 +30,7 @@ def convert_video(model,
                   output_alpha: Optional[str] = None,
                   output_foreground: Optional[str] = None,
                   output_video_mbps: Optional[float] = None,
+                  output_video_fps:  Optional[int] = None,
                   seq_chunk: int = 1,
                   num_workers: int = 0,
                   progress: bool = True,
@@ -79,7 +80,8 @@ def convert_video(model,
     
     # Initialize writers
     if output_type == 'video':
-        frame_rate = source.frame_rate if isinstance(source, VideoReader) else 30
+        output_video_fps = 30 if output_video_fps is None else frame_rate
+        frame_rate = source.frame_rate if isinstance(source, VideoReader) else output_video_fps
         output_video_mbps = 1 if output_video_mbps is None else output_video_mbps
         if output_composition is not None:
             writer_com = VideoWriter(
@@ -184,6 +186,7 @@ if __name__ == '__main__':
     parser.add_argument('--output-foreground', type=str)
     parser.add_argument('--output-type', type=str, required=True, choices=['video', 'png_sequence'])
     parser.add_argument('--output-video-mbps', type=int, default=1)
+    parser.add_argument('--output-video-fps', type=int, default=30)
     parser.add_argument('--seq-chunk', type=int, default=1)
     parser.add_argument('--num-workers', type=int, default=0)
     parser.add_argument('--disable-progress', action='store_true')
@@ -199,6 +202,7 @@ if __name__ == '__main__':
         output_alpha=args.output_alpha,
         output_foreground=args.output_foreground,
         output_video_mbps=args.output_video_mbps,
+        output_video_fps=args.output_video_fps,
         seq_chunk=args.seq_chunk,
         num_workers=args.num_workers,
         progress=not args.disable_progress
