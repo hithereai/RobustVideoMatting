@@ -80,8 +80,8 @@ def convert_video(model,
     
     # Initialize writers
     if output_type == 'video':
-        output_video_fps = 30 if output_video_fps is None else frame_rate
-        frame_rate = source.frame_rate if isinstance(source, VideoReader) else output_video_fps
+        output_video_fps = 30 if output_video_fps is None else source.frame_rate
+        frame_rate = source.frame_rate if isinstance(source, VideoReader) else output_video_fps #output_video_fps
         output_video_mbps = 1 if output_video_mbps is None else output_video_mbps
         if output_composition is not None:
             writer_com = VideoWriter(
